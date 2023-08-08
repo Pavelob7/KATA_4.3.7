@@ -1,12 +1,21 @@
 const searchInput = document.querySelector("input");
+const searchBlockResults = document.querySelector(".search-block__results");
+const saved = document.querySelector(".saved");
 
-// API GitHub
+const debounce = (fn, debounceTime) => {
+	let inDebounce;
+	return function () {
+		clearTimeout(inDebounce);
+		inDebounce = setTimeout(() => fn.apply(this, arguments), debounceTime);
+	};
+};
 
-const getSearchResults = async () => {
+async function getSearchResults() {
 	const searchUrl = new URL("https://api.github.com/search/repositories");
 	const repositorySearch = searchInput.value;
 	if (repositorySearch === "") {
 		removeResults();
+		hideNoResultsMessage();
 		return;
 	}
 	searchUrl.searchParams.append("q", repositorySearch);
@@ -14,18 +23,27 @@ const getSearchResults = async () => {
 		const response = await fetch(searchUrl);
 		if (response.ok) {
 			const searchResults = await response.json();
-			showResults(searchResults);
+			if (searchResults.items.length === 0) {
+				showNoResultsMessage();
+			} else {
+				hideNoResultsMessage();
+				showResults(searchResults);
+			}
 		} else {
 			return;
 		}
 	} catch (err) {
 		return null;
 	}
-};
+}
 
-// Создание блока вариантов поиска
+const getSearchResultsDebounce = debounce(getSearchResults, 500);
+searchInput.addEventListener("input", getSearchResultsDebounce);
 
-const searchBlockResults = document.querySelector(".search-block__results");
+function removeResults() {
+	searchBlockResults.innerHTML = "";
+	hideNoResultsMessage();
+}
 
 function showResults(results) {
 	removeResults();
@@ -40,24 +58,14 @@ function showResults(results) {
 	}
 }
 
-//для отсечки лишних запросов -- debounce
-
-const debounce = (fn, debounceTime) => {
-	let inDebounce;
-	return function () {
-		clearTimeout(inDebounce);
-		inDebounce = setTimeout(() => fn.apply(this, arguments), debounceTime);
-	};
-};
-
-const getSearchResultsDebounce = debounce(getSearchResults, 500);
-searchInput.addEventListener("input", getSearchResultsDebounce);
-
-function removeResults() {
-	searchBlockResults.innerHTML = "";
+function showNoResultsMessage() {
+	removeResults();
+	searchBlockResults.innerHTML = "Таких репозиториев нет";
 }
 
-// Сохранение выбора пользователя
+function hideNoResultsMessage() {
+	searchBlockResults.innerHTML = "";
+}
 
 searchBlockResults.addEventListener("click", function (evt) {
 	if (evt.target.classList.contains("search-block__result")) {
@@ -68,10 +76,6 @@ searchBlockResults.addEventListener("click", function (evt) {
 		return;
 	}
 });
-
-// Создание 1 блока результатов выбора пользователя
-
-const saved = document.querySelector(".saved");
 
 function saveResult(savedResult) {
 	const name = savedResult.textContent;
@@ -96,8 +100,6 @@ function saveResult(savedResult) {
 	div.append(btn);
 	saved.append(div);
 }
-
-// Удаление 1 блока результатов выбора пользователя
 
 saved.addEventListener("click", function (evt) {
 	if (evt.target.classList.contains("remove-btn")) {
