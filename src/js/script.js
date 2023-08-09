@@ -1,3 +1,6 @@
+//Объясните, пожалуйста, мне тупому, почему так важны именно 2 пробела, а не табы?
+//В WebStorm у меня автоматически код выравнивается табами, мне всегда ок было
+
 const searchInput = document.querySelector("input");
 const searchBlockResults = document.querySelector(".search-block__results");
 const saved = document.querySelector(".saved");
@@ -5,8 +8,8 @@ const saved = document.querySelector(".saved");
 const debounce = (fn, debounceTime) => {
   let inDebounce;
   return function () {
-    clearTimeout(inDebounce);
-    inDebounce = setTimeout(() => fn.apply(this, arguments), debounceTime);
+  clearTimeout(inDebounce);
+  inDebounce = setTimeout(() => fn.apply(this, arguments), debounceTime);
   };
 };
 
@@ -14,26 +17,26 @@ async function getSearchResults() {
   const searchUrl = new URL("https://api.github.com/search/repositories");
   const repositorySearch = searchInput.value;
   if (repositorySearch === "") {
-    removeResults();
-    hideNoResultsMessage();
-    return;
+  removeResults();
+  hideNoResultsMessage();
+  return;
   }
   searchUrl.searchParams.append("q", repositorySearch);
   try {
-    const response = await fetch(searchUrl);
-    if (response.ok) {
-      const searchResults = await response.json();
-      if (searchResults.items.length === 0) {
-        showNoResultsMessage();
-      } else {
-        hideNoResultsMessage();
-        showResults(searchResults);
-      }
-    } else {
-      return;
-    }
+  const response = await fetch(searchUrl);
+  if (response.ok) {
+  const searchResults = await response.json();
+  if (searchResults.items.length === 0) {
+  showNoResultsMessage();
+  } else {
+  hideNoResultsMessage();
+  showResults(searchResults);
+  }
+  } else {
+  return;
+  }
   } catch (err) {
-    return null;
+  return null;
   }
 }
 
@@ -48,13 +51,13 @@ function removeResults() {
 function showResults(results) {
   removeResults();
   for (let i = 0; i < 5; i++) {
-    const { name, owner, stargazers_count: stars } = results.items[i];
-    const div = document.createElement("div");
-    div.innerHTML = `${name}`;
-    div.classList.add("search-block__result");
-    div.dataset.owner = `${owner.login}`;
-    div.dataset.stars = `${stars}`;
-    searchBlockResults.append(div);
+  const { name, owner, stargazers_count: stars } = results.items[i];
+  const div = document.createElement("div");
+  div.innerHTML = `${name}`;
+  div.classList.add("search-block__result");
+  div.dataset.owner = `${owner.login}`;
+  div.dataset.stars = `${stars}`;
+  searchBlockResults.append(div);
   }
 }
 
@@ -69,11 +72,11 @@ function hideNoResultsMessage() {
 
 searchBlockResults.addEventListener("click", function (evt) {
   if (evt.target.classList.contains("search-block__result")) {
-    saveResult(evt.target);
-    searchInput.value = "";
-    removeResults();
+  saveResult(evt.target);
+  searchInput.value = "";
+  removeResults();
   } else {
-    return;
+  return;
   }
 });
 
@@ -103,8 +106,8 @@ function saveResult(savedResult) {
 
 saved.addEventListener("click", function (evt) {
   if (evt.target.classList.contains("remove-btn")) {
-    evt.target.parentElement.remove();
+  evt.target.parentElement.remove();
   } else {
-    return;
+  return;
   }
 });
