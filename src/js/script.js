@@ -1,6 +1,3 @@
-//Объясните, пожалуйста, мне тупому, почему так важны именно 2 пробела, а не табы?
-//В WebStorm у меня автоматически код выравнивается табами, мне всегда ок было
-
 const searchInput = document.querySelector("input");
 const searchBlockResults = document.querySelector(".search-block__results");
 const saved = document.querySelector(".saved");
